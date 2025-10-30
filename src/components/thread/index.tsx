@@ -47,6 +47,57 @@ import {
   useArtifactContext,
 } from "./artifact";
 
+import {
+  // FormEvent,
+  // useRef,
+  // useEffect,
+  // useState,
+  // ReactNode,
+  KeyboardEvent, // Thêm KeyboardEvent
+} from "react";
+import { ThemeProvider } from "next-themes"; // Sửa lỗi 1
+// import { LangGraphLogoSVG } from "@/components/logo"; // Sửa lỗi 2: Thay thế bằng logo thật
+
+// ---- BẮT ĐẦU CHỈNH SỬA ----
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
+// ---- KẾT THÚC CHỈNH SỬA ----
+
+// ---- BẮT ĐẦU CHỈNH SỬA ----
+import { ConfigPanel } from "./ConfigPanel";
+import { Settings } from "lucide-react"; // Import Settings icon
+// ---- KẾT THÚC CHỈNH SỬA ----
+
+
+
+
+function ThemeToggle() {
+  const { setTheme, theme } = useTheme();
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+           <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="h-8 w-8" // Kích thước nhỏ hơn
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="left">
+          <p>Toggle theme</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+// ---- KẾT THÚC CHỈNH SỬA ----
+
 function StickyToBottomContent(props: {
   content: ReactNode;
   footer?: ReactNode;
@@ -153,6 +204,10 @@ export function Thread() {
     setArtifactContext({});
   };
 
+  // ---- BẮT ĐẦU CHỈNH SỬA ----
+  const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+  // ---- KẾT THÚC CHỈNH SỬA ----
+
   useEffect(() => {
     if (!stream.error) {
       lastError.current = undefined;
@@ -252,6 +307,23 @@ export function Thread() {
     (m) => m.type === "ai" || m.type === "tool",
   );
 
+    // ---- SỬA LỖI 4: ĐỊNH NGHĨA HÀM handleKeyDown ----
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      !e.metaKey &&
+      !e.nativeEvent.isComposing
+    ) {
+      e.preventDefault();
+      const form = e.currentTarget.closest("form");
+      form?.requestSubmit();
+    }
+  };
+  // ---- KẾT THÚC SỬA LỖI 4 ----
+
+
+
   return (
     <div className="flex h-screen w-full overflow-hidden">
       <div className="relative hidden lg:flex">
@@ -322,6 +394,12 @@ export function Thread() {
                   </Button>
                 )}
               </div>
+              
+              <div className="absolute top-2 right-4 flex items-center gap-2"> {/* Thêm gap-2 */}
+                <ThemeToggle /> {/* Thêm nút Theme Toggle */}
+                <OpenGitHubRepo />
+              </div>
+
               <div className="absolute top-2 right-4 flex items-center">
                 <OpenGitHubRepo />
               </div>
@@ -367,10 +445,13 @@ export function Thread() {
                 </motion.button>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="flex items-center">
+              {/* <div className="flex items-center gap-4"> */}
+              <div className="flex items-center gap-2"> {/* Giảm gap */}
+                <ThemeToggle /> {/* Thêm nút Theme Toggle */}
+                <OpenGitHubRepo />
+                {/* <div className="flex items-center">
                   <OpenGitHubRepo />
-                </div>
+                </div> */}
                 <TooltipIconButton
                   size="lg"
                   className="p-4"
@@ -378,7 +459,8 @@ export function Thread() {
                   variant="ghost"
                   onClick={() => setThreadId(null)}
                 >
-                  <SquarePen className="size-5" />
+                  {/* <SquarePen className="size-5" /> */}
+                  <SquarePen className="size-4" /> {/* Giảm kích thước icon */}
                 </TooltipIconButton>
               </div>
 
@@ -388,8 +470,13 @@ export function Thread() {
 
           <StickToBottom className="relative flex-1 overflow-hidden">
             <StickyToBottomContent
+              // className={cn(
+              //   "absolute inset-0 overflow-y-scroll px-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent",
+              //   !chatStarted && "mt-[25vh] flex flex-col items-stretch",
+              //   chatStarted && "grid grid-rows-[1fr_auto]",
+              // )}
               className={cn(
-                "absolute inset-0 overflow-y-scroll px-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent",
+                "absolute inset-0 overflow-y-scroll px-4 scrollbar-themed", // Sử dụng scrollbar-themed
                 !chatStarted && "mt-[25vh] flex flex-col items-stretch",
                 chatStarted && "grid grid-rows-[1fr_auto]",
               )}
@@ -430,12 +517,12 @@ export function Thread() {
                 </>
               }
               footer={
-                <div className="sticky bottom-0 flex flex-col items-center gap-8 bg-white">
+                <div className="sticky bottom-0 flex flex-col items-center gap-8">
                   {!chatStarted && (
                     <div className="flex items-center gap-3">
                       <LangGraphLogoSVG className="h-8 flex-shrink-0" />
                       <h1 className="text-2xl font-semibold tracking-tight">
-                        Agent Chat
+                        ANNA Chat
                       </h1>
                     </div>
                   )}
@@ -541,12 +628,12 @@ export function Thread() {
               }
             />
           </StickToBottom>
-        </motion.div>
-        <div className="relative flex flex-col border-l">
-          <div className="absolute inset-0 flex min-w-[30vw] flex-col">
-            <div className="grid grid-cols-[1fr_auto] border-b p-4">
-              <ArtifactTitle className="truncate overflow-hidden" />
-              <button
+       </motion.div>
+       <div className="relative flex flex-col border-l">
+         <div className="absolute inset-0 flex min-w-[30vw] flex-col">
+           <div className="grid grid-cols-[1fr_auto] border-b p-4">
+             <ArtifactTitle className="truncate overflow-hidden" />
+             <button
                 onClick={closeArtifact}
                 className="cursor-pointer"
               >

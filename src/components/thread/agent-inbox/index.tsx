@@ -4,6 +4,10 @@ import { useState } from "react";
 import { HumanInterrupt } from "@langchain/langgraph/prebuilt";
 import { useStreamContext } from "@/providers/Stream";
 
+// ---- BẮT ĐẦU CHỈNH SỬA ----
+import { cn } from "@/lib/utils";
+// ---- KẾT THÚC CHỈNH SỬA ----
+
 interface ThreadViewProps {
   interrupt: HumanInterrupt | HumanInterrupt[];
 }
@@ -36,7 +40,14 @@ export function ThreadView({ interrupt }: ThreadViewProps) {
   };
 
   return (
-    <div className="flex h-[80vh] w-full flex-col overflow-y-scroll rounded-2xl bg-gray-50/50 p-8 lg:flex-row [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent">
+    // <
+    //   div className="flex h-[80vh] w-full flex-col overflow-y-scroll rounded-2xl bg-gray-50/50 p-8 lg:flex-row [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent"
+    //   style={{ height: "auto", border: "1px solid black" }}
+    // >
+    <div className={cn(
+        "flex w-full flex-col overflow-y-auto rounded-lg border border-border p-4 shadow-sm lg:flex-row scrollbar-themed max-h-[70vh]", // Giảm padding, thêm max-h, border
+         showSidePanel ? "lg:h-auto" : "" // Chiều cao tự động nếu panel phụ mở
+    )}>
       {showSidePanel ? (
         <StateView
           handleShowSidePanel={handleShowSidePanel}

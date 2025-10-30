@@ -46,7 +46,8 @@ export type ThreadData<
 
 export type ThreadStatusWithAll = ThreadStatus | "all";
 
-export type SubmitType = "accept" | "response" | "edit";
+// export type SubmitType = "accept" | "response" | "edit";
+export type SubmitType = "accept" | "edit" | "response" | "ignore" | undefined;
 
 export interface AgentInbox {
   /**

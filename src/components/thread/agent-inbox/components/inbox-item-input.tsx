@@ -1,13 +1,154 @@
 import { HumanResponseWithEdits, SubmitType } from "../types";
 import { Textarea } from "@/components/ui/textarea";
-import React from "react";
+import React, { useState } from "react";
 import { haveArgsChanged, prettifyText } from "../utils";
 import { Button } from "@/components/ui/button";
-import { Undo2 } from "lucide-react";
+// import { Undo2 } from "lucide-react";
+// import { MarkdownText } from "../../markdown-text";
+// import { ActionRequest, HumanInterrupt } from "@langchain/langgraph/prebuilt";
+// import { toast } from "sonner";
+// import { Separator } from "@/components/ui/separator";
+
+// ---- BẮT ĐẦU CHỈNH SỬA ----
+import { Undo2, Pencil, Check, X } from "lucide-react"; // Thêm icons
 import { MarkdownText } from "../../markdown-text";
 import { ActionRequest, HumanInterrupt } from "@langchain/langgraph/prebuilt";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import { SyntaxHighlighter } from "../../syntax-highlighter"; // Import SyntaxHighlighter
+import { cn } from "@/lib/utils"; // Import cn
+// ---- KẾT THÚC CHỈNH SỬA ----
+
+// ---- BẮT ĐẦU CHỈNH SỬA ----
+// Component mới để chỉnh sửa Code Block
+interface CodeEditorProps {
+  initialCode: string;
+  language?: string;
+  onChange: (newCode: string) => void;
+  onSubmit: () => void; // Thêm onSubmit để xử lý khi nhấn Enter
+  disabled?: boolean;
+}
+
+const CodeEditor: React.FC<CodeEditorProps> = ({ initialCode, language, onChange, onSubmit, disabled }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentCode, setCurrentCode] = useState(initialCode);
+
+    const handleSave = () => {
+        onChange(currentCode);
+        setIsEditing(false);
+    };
+
+    const handleCancel = () => {
+        setCurrentCode(initialCode); // Reset về code ban đầu
+        setIsEditing(false);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        // Submit on Cmd/Ctrl + Enter
+        if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        handleSave();
+        onSubmit(); // Gọi cả hàm submit chung của form
+        }
+        // Cho phép Tab trong textarea
+        if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = e.currentTarget.selectionStart;
+        const end = e.currentTarget.selectionEnd;
+        const value = e.currentTarget.value;
+        // Thêm 2 dấu cách thay vì tab
+        e.currentTarget.value = value.substring(0, start) + '  ' + value.substring(end);
+        e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
+        setCurrentCode(e.currentTarget.value); // Cập nhật state
+        }
+    };
+
+    if (isEditing) {
+        return (
+            <div className="w-full">
+                <Textarea
+                    value={currentCode}
+                    onChange={(e) => setCurrentCode(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={disabled}
+                    className="h-auto min-h-[100px] w-full resize-y font-mono text-sm" // Style cho code editor
+                    rows={Math.max(5, currentCode.split('\n').length)} // Số dòng tự động
+                />
+                <div className="mt-2 flex justify-end gap-2">
+                    <Button variant="ghost" size="sm" onClick={handleCancel} disabled={disabled}>Cancel</Button>
+                    <Button variant="secondary" size="sm" onClick={handleSave} disabled={disabled}>Save</Button>
+                </div>
+            </div>
+        );
+    }
+
+    // Xác định language cho highlighter
+    const detectedLanguage = language || 'plaintext'; // Mặc định là plaintext nếu không có
+
+    return (
+        <div className="group relative w-full rounded-md border bg-gray-900 font-mono text-sm text-white">
+            <SyntaxHighlighter language={detectedLanguage} className="!p-3">
+                 {/* Thêm một dòng trống cuối nếu chưa có để dễ nhìn hơn */}
+                {currentCode.endsWith('\n') ? currentCode : currentCode + '\n'}
+            </SyntaxHighlighter>
+             {!disabled && (
+                 <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100"
+                    onClick={() => setIsEditing(true)}
+                 >
+                    <Pencil className="h-4 w-4 text-gray-400" />
+                 </Button>
+             )}
+        </div>
+    );
+};
+
+
+// Component Yes/No
+function YesNoComponent({
+  streaming,
+  actionRequestArgs,
+  handleSubmitAccept,
+  handleSubmitDecline,
+}: {
+  streaming: boolean;
+  actionRequestArgs: Record<string, any>;
+  handleSubmitAccept: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => Promise<void>;
+  handleSubmitDecline: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => Promise<void>;
+}) {
+  return (
+    <div className="flex w-full flex-col items-start gap-3 rounded-lg border border-border bg-card p-4 shadow-sm">
+      {/* Hiển thị args nếu có */}
+      {actionRequestArgs && Object.keys(actionRequestArgs).length > 0 && (
+         <div className="mb-2 w-full border-b border-border pb-2">
+            <ArgsRenderer args={actionRequestArgs} />
+         </div>
+      )}
+      <p className="text-sm text-muted-foreground mb-2">Do you want to proceed?</p>
+      <div className="flex w-full justify-end gap-2">
+        <Button
+          variant="outline"
+          disabled={streaming}
+          onClick={handleSubmitDecline}
+          className="border-destructive text-destructive hover:bg-destructive/10"
+        >
+          <X className="mr-1 h-4 w-4" /> Decline
+        </Button>
+         <Button
+          variant="secondary" // Hoặc 'default'
+          disabled={streaming}
+          onClick={handleSubmitAccept}
+          className="bg-green-600 text-white hover:bg-green-700" // Custom style for accept
+        >
+          <Check className="mr-1 h-4 w-4" /> Accept
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 
 function ResetButton({ handleReset }: { handleReset: () => void }) {
   return (
@@ -100,16 +241,58 @@ function ResponseComponent({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+    // if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
   };
 
+  // return (
+  //   <div className="flex w-full flex-col items-start gap-4 rounded-xl border-[1px] border-gray-300 p-6">
+  //     <div className="flex w-full items-center justify-between">
+  //       <p className="text-base font-semibold text-black">
+  //         Respond to assistant
+  //       </p>
+  //       <ResetButton
+  //         handleReset={() => {
+  //           onResponseChange("", res);
+  //         }}
+  //       />
+  //     </div>
+
+  //     {showArgsInResponse && (
+  //       <ArgsRenderer args={interruptValue.action_request.args} />
+  //     )}
+
+  //     <div className="flex w-full flex-col items-start gap-[6px]">
+  //       <p className="min-w-fit text-sm font-medium">Response</p>
+  //       <Textarea
+  //         disabled={streaming}
+  //         value={res.args}
+  //         onChange={(e) => onResponseChange(e.target.value, res)}
+  //         onKeyDown={handleKeyDown}
+  //         rows={4}
+  //         placeholder="Your response here..."
+  //       />
+  //     </div>
+
+  //     <div className="flex w-full items-center justify-end gap-2">
+  //       <Button
+  //         variant="brand"
+  //         disabled={streaming}
+  //         onClick={handleSubmit}
+  //       >
+  //         Send Response
+  //       </Button>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="flex w-full flex-col items-start gap-4 rounded-xl border-[1px] border-gray-300 p-6">
+     <div className="flex w-full flex-col items-start gap-3 rounded-lg border border-border bg-card p-4 shadow-sm"> {/* Giảm padding, gap, đổi style */}
       <div className="flex w-full items-center justify-between">
-        <p className="text-base font-semibold text-black">
+        <p className="text-sm font-medium text-foreground"> {/* Giảm font */}
           Respond to assistant
         </p>
         <ResetButton
@@ -119,25 +302,29 @@ function ResponseComponent({
         />
       </div>
 
-      {showArgsInResponse && (
-        <ArgsRenderer args={interruptValue.action_request.args} />
-      )}
+       {showArgsInResponse && (
+         <div className="mb-2 w-full border-b border-border pb-2"> {/* Thêm border */}
+           <ArgsRenderer args={interruptValue.action_request.args} />
+         </div>
+       )}
 
-      <div className="flex w-full flex-col items-start gap-[6px]">
-        <p className="min-w-fit text-sm font-medium">Response</p>
+      <div className="flex w-full flex-col items-start gap-1"> {/* Giảm gap */}
+        <p className="min-w-fit text-xs font-medium text-muted-foreground">Response</p> {/* Giảm font, đổi màu */}
         <Textarea
           disabled={streaming}
           value={res.args}
           onChange={(e) => onResponseChange(e.target.value, res)}
           onKeyDown={handleKeyDown}
-          rows={4}
+          rows={3} // Giảm số dòng mặc định
           placeholder="Your response here..."
+          className="text-sm" // Giảm font chữ
         />
       </div>
 
       <div className="flex w-full items-center justify-end gap-2">
         <Button
-          variant="brand"
+          size="sm" // Giảm size nút
+          variant="default" // Đổi thành default
           disabled={streaming}
           onClick={handleSubmit}
         >
@@ -257,45 +444,126 @@ function EditAndOrAcceptComponent({
     }
   };
 
+  // return (
+  //   <div className="flex w-full flex-col items-start gap-4 rounded-lg border-[1px] border-gray-300 p-6">
+  //     <div className="flex w-full items-center justify-between">
+  //       <p className="text-base font-semibold text-black">{header}</p>
+  //       <ResetButton handleReset={handleReset} />
+  //     </div>
+
+  //     {Object.entries(editResponse.args.args).map(([k, v], idx) => {
+  //       const value = ["string", "number"].includes(typeof v)
+  //         ? v
+  //         : JSON.stringify(v, null);
+  //       // Calculate the default number of rows by the total length of the initial value divided by 30
+  //       // or 8, whichever is greater. Stored in a ref to prevent re-rendering.
+  //       if (
+  //         defaultRows.current[k as keyof typeof defaultRows.current] ===
+  //         undefined
+  //       ) {
+  //         defaultRows.current[k as keyof typeof defaultRows.current] = !v.length
+  //           ? 3
+  //           : Math.max(v.length / 30, 7);
+  //       }
+  //       const numRows =
+  //         defaultRows.current[k as keyof typeof defaultRows.current] || 8;
+
+  //       return (
+  //         <div
+  //           className="flex h-full w-full flex-col items-start gap-1 px-[1px]"
+  //           key={`allow-edit-args--${k}-${idx}`}
+  //         >
+  //           <div className="flex w-full flex-col items-start gap-[6px]">
+  //             <p className="min-w-fit text-sm font-medium">{prettifyText(k)}</p>
+  //             <Textarea
+  //               disabled={streaming}
+  //               className="h-full"
+  //               value={value}
+  //               onChange={(e) => onEditChange(e.target.value, editResponse, k)}
+  //               onKeyDown={handleKeyDown}
+  //               rows={numRows}
+  //             />
+  //           </div>
+  //         </div>
+  //       );
+  //     })}
+
+  //     <div className="flex w-full items-center justify-end gap-2">
+  //       <Button
+  //         variant="brand"
+  //         disabled={streaming}
+  //         onClick={handleSubmit}
+  //       >
+  //         {buttonText}
+  //       </Button>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="flex w-full flex-col items-start gap-4 rounded-lg border-[1px] border-gray-300 p-6">
+    <div className="flex w-full flex-col items-start gap-3 rounded-lg border border-border bg-card p-4 shadow-sm"> {/* Giảm padding, gap, đổi style */}
       <div className="flex w-full items-center justify-between">
-        <p className="text-base font-semibold text-black">{header}</p>
+         <p className="text-sm font-medium text-foreground">{header}</p> {/* Giảm font */}
         <ResetButton handleReset={handleReset} />
       </div>
 
       {Object.entries(editResponse.args.args).map(([k, v], idx) => {
-        const value = ["string", "number"].includes(typeof v)
-          ? v
-          : JSON.stringify(v, null);
-        // Calculate the default number of rows by the total length of the initial value divided by 30
-        // or 8, whichever is greater. Stored in a ref to prevent re-rendering.
-        if (
-          defaultRows.current[k as keyof typeof defaultRows.current] ===
-          undefined
-        ) {
-          defaultRows.current[k as keyof typeof defaultRows.current] = !v.length
-            ? 3
-            : Math.max(v.length / 30, 7);
+        let value = "";
+        let isCode = false;
+        let language = 'plaintext'; // Ngôn ngữ mặc định
+
+        if (typeof v === 'string') {
+          // Kiểm tra xem có phải là code block không
+          const codeBlockMatch = v.match(/^```(\w+)?\n([\s\S]*)\n```$/) || v.match(/^`([^`]+)`$/);
+          if (codeBlockMatch) {
+            isCode = true;
+            language = codeBlockMatch[1] || 'plaintext'; // Lấy ngôn ngữ nếu có
+            value = codeBlockMatch[2] || codeBlockMatch[1]; // Lấy nội dung code
+          } else {
+             value = v;
+          }
+        } else if (typeof v === 'number') {
+            value = v.toString();
+        } else {
+            value = JSON.stringify(v, null, 2); // Giả sử là JSON nếu không phải string/number
+            language = 'json';
+            isCode = true; // Coi JSON như code để dùng CodeEditor
         }
-        const numRows =
-          defaultRows.current[k as keyof typeof defaultRows.current] || 8;
+
+        // ... (Tính toán numRows như cũ)
+         const numRows =
+          defaultRows.current[k as keyof typeof defaultRows.current] || 5; // Giảm số dòng mặc định
+
 
         return (
           <div
-            className="flex h-full w-full flex-col items-start gap-1 px-[1px]"
+            className="flex h-full w-full flex-col items-start gap-1" // Giảm gap
             key={`allow-edit-args--${k}-${idx}`}
           >
-            <div className="flex w-full flex-col items-start gap-[6px]">
-              <p className="min-w-fit text-sm font-medium">{prettifyText(k)}</p>
-              <Textarea
-                disabled={streaming}
-                className="h-full"
-                value={value}
-                onChange={(e) => onEditChange(e.target.value, editResponse, k)}
-                onKeyDown={handleKeyDown}
-                rows={numRows}
-              />
+            <div className="flex w-full flex-col items-start gap-1"> {/* Giảm gap */}
+              <p className="min-w-fit text-xs font-medium text-muted-foreground">{prettifyText(k)}</p> {/* Giảm font, đổi màu */}
+              {isCode ? (
+                <CodeEditor
+                    initialCode={value}
+                    language={language}
+                    disabled={streaming}
+                    onChange={(newCode) => {
+                         // Format lại code block nếu cần khi lưu
+                         const formattedCode = language === 'json' ? newCode : "```" + language + "\n" + newCode + "\n```";
+                         onEditChange(formattedCode, editResponse, k);
+                    }}
+                    onSubmit={() => handleSubmit({ preventDefault: () => {} } as React.KeyboardEvent)} // Trigger submit on Ctrl+Enter from CodeEditor
+                />
+              ) : (
+                <Textarea
+                  disabled={streaming}
+                  className="h-full text-sm" // Giảm font
+                  value={value}
+                  onChange={(e) => onEditChange(e.target.value, editResponse, k)}
+                  onKeyDown={handleKeyDown}
+                  rows={numRows}
+                />
+              )}
             </div>
           </div>
         );
@@ -303,9 +571,10 @@ function EditAndOrAcceptComponent({
 
       <div className="flex w-full items-center justify-end gap-2">
         <Button
-          variant="brand"
-          disabled={streaming}
-          onClick={handleSubmit}
+           size="sm" // Giảm size nút
+           variant="default" // Đổi thành default
+           disabled={streaming}
+           onClick={handleSubmit}
         >
           {buttonText}
         </Button>
@@ -313,6 +582,8 @@ function EditAndOrAcceptComponent({
     </div>
   );
 }
+// const EditAndOrAccept = React.memo(EditAndOrAcceptComponent);
+// }
 const EditAndOrAccept = React.memo(EditAndOrAcceptComponent);
 
 export function InboxItemInput({
@@ -338,6 +609,48 @@ export function InboxItemInput({
     hasArgs && !isEditAllowed && !acceptAllowed && isResponseAllowed;
   const showArgsOutsideActionCards =
     hasArgs && !showArgsInResponse && !isEditAllowed && !acceptAllowed;
+
+let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
+
+  const hasOnlyBooleanArgs = hasArgs && Object.values(interruptValue.action_request.args).every(v => typeof v === 'boolean');
+  const isYesNo = acceptAllowed && isResponseAllowed && hasOnlyBooleanArgs; // Điều kiện cho Yes/No
+  const isEditOrCodeEdit = isEditAllowed;
+  const isText = isResponseAllowed && !isEditAllowed && !isYesNo && !acceptAllowed; // Chỉ cho nhập text
+  const isAcceptOnly = acceptAllowed && !isEditAllowed && !isResponseAllowed;
+
+  if (isYesNo) {
+      hitlType = 'yesno';
+  } else if (isEditOrCodeEdit) {
+      hitlType = 'edit'; // Sẽ render CodeEditor bên trong nếu cần
+  } else if (isText) {
+      hitlType = 'text';
+  } else if (isAcceptOnly) {
+      hitlType = 'accept_only';
+  }
+
+  // ---- SỬA 2: Mở rộng kiểu sự kiện cho 'e' ----
+  // Đổi kiểu của `e` để chấp nhận cả MouseEvent và KeyboardEvent
+  const handleSubmitDecline = async (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Element>) => {
+      const declineResponse = humanResponse.find(r => r.type === 'ignore');
+      if (declineResponse) {
+          setSelectedSubmitType('ignore'); // Lỗi 1 được sửa bằng cách cập nhật type SubmitType
+          await handleSubmit(e); // Gọi handleSubmit gốc
+      } else {
+          toast.error("Decline action not configured.");
+      }
+  };
+
+  // ---- SỬA 3: Mở rộng kiểu sự kiện cho 'e' ----
+  // Đổi kiểu của `e` để chấp nhận cả MouseEvent và KeyboardEvent
+  const handleSubmitAccept = async (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Element>) => {
+      const acceptResponse = humanResponse.find(r => r.type === 'accept');
+      if (acceptResponse) {
+          setSelectedSubmitType('accept');
+          await handleSubmit(e); // Gọi handleSubmit gốc
+      } else {
+          toast.error("Accept action not configured.");
+      }
+  };
 
   const onEditChange = (
     change: string | string[],
@@ -490,43 +803,121 @@ export function InboxItemInput({
     });
   };
 
+  // return (
+  //   <div className="flex w-full flex-col items-start justify-start gap-2">
+  //     {showArgsOutsideActionCards && (
+  //       <ArgsRenderer args={interruptValue.action_request.args} />
+  //     )}
+
+  //     <div className="flex w-full flex-col items-start gap-2">
+  //       <EditAndOrAccept
+  //         humanResponse={humanResponse}
+  //         streaming={streaming}
+  //         initialValues={initialValues}
+  //         interruptValue={interruptValue}
+  //         onEditChange={onEditChange}
+  //         handleSubmit={handleSubmit}
+  //       />
+  //       {supportsMultipleMethods ? (
+  //         <div className="mx-auto mt-3 flex items-center gap-3">
+  //           <Separator className="w-[full]" />
+  //           <p className="text-sm text-gray-500">Or</p>
+  //           <Separator className="w-full" />
+  //         </div>
+  //       ) : null}
+  //       <Response
+  //         humanResponse={humanResponse}
+  //         streaming={streaming}
+  //         showArgsInResponse={showArgsInResponse}
+  //         interruptValue={interruptValue}
+  //         onResponseChange={onResponseChange}
+  //         handleSubmit={handleSubmit}
+  //       />
+  //       {streaming && <p className="text-sm text-gray-600">Running...</p>}
+  //       {streamFinished && (
+  //         <p className="text-base font-medium text-green-600">
+  //           Successfully finished Graph invocation.
+  //         </p>
+  //       )}
+  //     </div>
+  //   </div>
+  // );
   return (
     <div className="flex w-full flex-col items-start justify-start gap-2">
-      {showArgsOutsideActionCards && (
-        <ArgsRenderer args={interruptValue.action_request.args} />
+      {/* ---- BẮT ĐẦU CHỈNH SỬA ---- */}
+      {/* Render component dựa trên hitlType */}
+       {hitlType === 'none' && (
+         <p className="text-sm text-muted-foreground p-4 text-center w-full">No action required from user.</p>
+       )}
+
+      {showArgsOutsideActionCards && hitlType !== 'yesno' && hitlType !== 'accept_only' && (
+         <div className="w-full rounded-lg border border-border bg-card p-4 shadow-sm mb-3">
+             <ArgsRenderer args={interruptValue.action_request.args} />
+         </div>
       )}
 
-      <div className="flex w-full flex-col items-start gap-2">
-        <EditAndOrAccept
-          humanResponse={humanResponse}
+      {hitlType === 'yesno' && (
+        <YesNoComponent
           streaming={streaming}
-          initialValues={initialValues}
-          interruptValue={interruptValue}
-          onEditChange={onEditChange}
-          handleSubmit={handleSubmit}
+          actionRequestArgs={interruptValue.action_request.args}
+          handleSubmitAccept={handleSubmitAccept}
+          handleSubmitDecline={handleSubmitDecline}
         />
-        {supportsMultipleMethods ? (
-          <div className="mx-auto mt-3 flex items-center gap-3">
-            <Separator className="w-[full]" />
-            <p className="text-sm text-gray-500">Or</p>
-            <Separator className="w-full" />
-          </div>
-        ) : null}
-        <Response
-          humanResponse={humanResponse}
+      )}
+
+      {hitlType === 'edit' && (
+          <EditAndOrAccept
+            humanResponse={humanResponse}
+            streaming={streaming}
+            initialValues={initialValues}
+            interruptValue={interruptValue}
+            onEditChange={onEditChange}
+            // ---- SỬA 4: Thêm 'async' vào hàm ----
+            handleSubmit={async (e) => {
+                 if (acceptAllowed && !hasEdited) {
+                     setSelectedSubmitType('accept');
+                 } else {
+                     setSelectedSubmitType('edit');
+                 }
+                 await handleSubmit(e); // Sử dụng await vì handleSubmit gốc là async
+            }}
+          />
+      )}
+
+      {hitlType === 'text' && (
+         <Response
+            humanResponse={humanResponse}
+            streaming={streaming}
+            showArgsInResponse={showArgsInResponse}
+            interruptValue={interruptValue}
+            onResponseChange={onResponseChange}
+            // ---- SỬA 5: Thêm 'async' vào hàm ----
+            handleSubmit={async (e) => {
+                setSelectedSubmitType('response');
+                await handleSubmit(e); // Sử dụng await
+            }}
+          />
+      )}
+
+       {hitlType === 'accept_only' && (
+        <AcceptComponent
+          actionRequestArgs={interruptValue.action_request.args}
           streaming={streaming}
-          showArgsInResponse={showArgsInResponse}
-          interruptValue={interruptValue}
-          onResponseChange={onResponseChange}
-          handleSubmit={handleSubmit}
+          handleSubmit={handleSubmitAccept} // Hàm này đã được sửa ở trên để nhận đúng loại event
         />
-        {streaming && <p className="text-sm text-gray-600">Running...</p>}
+      )}
+
+
+      {/* Hiển thị thông báo streaming/finished */}
+      <div className="mt-2 w-full text-center">
+        {streaming && <p className="text-xs text-muted-foreground animate-pulse">Running...</p>}
         {streamFinished && (
-          <p className="text-base font-medium text-green-600">
-            Successfully finished Graph invocation.
-          </p>
+            <p className="text-xs font-medium text-green-600">
+                Invocation finished successfully.
+            </p>
         )}
       </div>
+      {/* ---- KẾT THÚC CHỈNH SỬA ---- */}
     </div>
   );
 }
