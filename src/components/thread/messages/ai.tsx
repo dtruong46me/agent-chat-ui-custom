@@ -137,17 +137,27 @@ export function AssistantMessage({
   const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
   const isToolResult = message?.type === "tool";
 
-  // ---- START MODIFY ----
-  // Luôn đặt container ngoài là w-full.
-  // Thêm -mt-3 (âm margin top) nếu là ToolResult để kéo nó lại gần ToolCalls ở trên.
+  // ---- BẮT ĐẦU LOGIC SỬA KHOẢNG CÁCH ----
+  const hasAnyToolCall = hasToolCalls || hasAnthropicToolCalls;
+  const isTextOnlyMessage = contentString && !hasAnyToolCall && !isToolResult;
+
   return (
     <div className={cn(
       "group flex w-full items-start gap-2",
-      isToolResult && "-mt-3" // Kéo ToolResult lại gần ToolCalls
+      // 1. NẾU LÀ TOOL CALL: Thêm margin-top LỚN (mt-4) để tách khỏi nội dung bên trên.
+      hasAnyToolCall && !isToolResult && "mt-5",
+      // 2. NẾU LÀ TOOL RESULT: Thêm margin-top ÂM (mt-2) để kéo nó lại gần ToolCall bên trên.
+      isToolResult && "-mt-8"
     )}>
-      {/* Container bên trong cũng luôn là w-full */}
-      <div className={cn("flex w-full flex-col gap-2")}>
-    {/* ---- END MODIFY ---- */}
+      {/* Container bên trong:
+        - Nếu là tin nhắn CHỈ có text, căn lề trái (mr-auto)
+        - Nếu là tin nhắn có Tool, để w-full để cho phép con (tool-calls) căn giữa
+      */}
+      <div className={cn(
+        "flex w-full flex-col gap-2",
+        isTextOnlyMessage ? "mr-auto" : "" // Căn lề trái cho text, w-full cho tool
+      )}>
+    {/* ---- KẾT THÚC LOGIC SỬA KHOẢNG CÁCH ---- */}
         {isToolResult ? (
           <>
             <ToolResult message={message} />
@@ -160,13 +170,10 @@ export function AssistantMessage({
         ) : (
           <>
             {contentString.length > 0 && (
-              // ---- START MODIFY ----
-              // Bọc text trong 1 div riêng để căn lề trái (`mr-auto`)
-              // mà không ảnh hưởng đến tool calls
+              // Bọc text trong 1 div riêng để căn lề trái (mr-auto)
               <div className="mr-auto py-1">
                 <MarkdownText>{contentString}</MarkdownText>
               </div>
-              // ---- END MODIFY ----
             )}
 
             {!hideToolCalls && (
