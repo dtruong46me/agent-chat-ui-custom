@@ -1,3 +1,4 @@
+// ---- START MODIFY ----
 import { parsePartialJson } from "@langchain/core/output_parsers";
 import { useStreamContext } from "@/providers/Stream";
 import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
@@ -136,13 +137,17 @@ export function AssistantMessage({
   const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
   const isToolResult = message?.type === "tool";
 
-  if (isToolResult && hideToolCalls) {
-    return null;
-  }
-
+  // ---- START MODIFY ----
+  // Luôn đặt container ngoài là w-full.
+  // Thêm -mt-3 (âm margin top) nếu là ToolResult để kéo nó lại gần ToolCalls ở trên.
   return (
-    <div className="group mr-auto flex items-start gap-2">
-      <div className="flex flex-col gap-2">
+    <div className={cn(
+      "group flex w-full items-start gap-2",
+      isToolResult && "-mt-3" // Kéo ToolResult lại gần ToolCalls
+    )}>
+      {/* Container bên trong cũng luôn là w-full */}
+      <div className={cn("flex w-full flex-col gap-2")}>
+    {/* ---- END MODIFY ---- */}
         {isToolResult ? (
           <>
             <ToolResult message={message} />
@@ -155,9 +160,13 @@ export function AssistantMessage({
         ) : (
           <>
             {contentString.length > 0 && (
-              <div className="py-1">
+              // ---- START MODIFY ----
+              // Bọc text trong 1 div riêng để căn lề trái (`mr-auto`)
+              // mà không ảnh hưởng đến tool calls
+              <div className="mr-auto py-1">
                 <MarkdownText>{contentString}</MarkdownText>
               </div>
+              // ---- END MODIFY ----
             )}
 
             {!hideToolCalls && (
@@ -222,3 +231,4 @@ export function AssistantMessageLoading() {
     </div>
   );
 }
+// ---- END MODIFY ----
