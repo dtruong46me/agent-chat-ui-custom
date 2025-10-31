@@ -15,11 +15,10 @@ import { cn } from "@/lib/utils";
 
 import "katex/dist/katex.min.css";
 
-// ---- BẮT ĐẦU CHỈNH SỬA ----
 // Import thêm icon Moon và Sun
 import { useTheme } from "next-themes"; // Import useTheme
 import { CheckIcon, CopyIcon, Moon, Sun } from "lucide-react";
-// ---- KẾT THÚC CHỈNH SỬA ----
+
 
 interface CodeHeaderProps {
   language?: string;
@@ -45,55 +44,35 @@ const useCopyToClipboard = ({
   return { isCopied, copyToClipboard };
 };
 
-// const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
-//   const { isCopied, copyToClipboard } = useCopyToClipboard();
-//   const onCopy = () => {
-//     if (!code || isCopied) return;
-//     copyToClipboard(code);
-//   };
-
-//   return (
-//     <div className="flex items-center justify-between gap-4 rounded-t-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white">
-//       <span className="lowercase [&>span]:text-xs">{language}</span>
-//       <TooltipIconButton
-//         tooltip="Copy"
-//         onClick={onCopy}
-//       >
-//         {!isCopied && <CopyIcon />}
-//         {isCopied && <CheckIcon />}
-//       </TooltipIconButton>
-//     </div>
-//   );
-// };
 
 const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard();
-  // ---- BẮT ĐẦU CHỈNH SỬA ----
+
   const { theme } = useTheme(); // Lấy theme hiện tại
-  // ---- KẾT THÚC CHỈNH SỬA ----
+  
   const onCopy = () => {
     if (!code || isCopied) return;
     copyToClipboard(code);
   };
 
   return (
-    // ---- BẮT ĐẦU CHỈNH SỬA ----
+  
     // Thay đổi background và text color dựa trên theme
     <div className={cn(
         "flex items-center justify-between gap-4 rounded-t-md px-4 py-1.5 text-xs",
         theme === 'dark' ? "bg-black text-gray-400" : "bg-gray-800 text-gray-300"
     )}>
       <span className="font-sans">{language}</span>
-    {/* ---- KẾT THÚC CHỈNH SỬA ---- */}
+    {/* */}
       <TooltipIconButton
         tooltip="Copy code"
         onClick={onCopy}
-        // ---- BẮT ĐẦU CHỈNH SỬA ----
+      
         className={cn(
           "h-6 w-6 p-1",
           theme === 'dark' ? "text-gray-400 hover:bg-gray-700 hover:text-gray-100" : "text-gray-300 hover:bg-gray-600 hover:text-gray-100"
         )}
-        // ---- KẾT THÚC CHỈNH SỬA ----
+        
       >
         {!isCopied && <CopyIcon className="h-4 w-4" />}
         {isCopied && <CheckIcon className="h-4 w-4 text-green-500" />}
@@ -102,197 +81,8 @@ const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
   );
 };
 
-// const defaultComponents: any = {
-//   h1: ({ className, ...props }: { className?: string }) => (
-//     <h1
-//       className={cn(
-//         "mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight last:mb-0",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   h2: ({ className, ...props }: { className?: string }) => (
-//     <h2
-//       className={cn(
-//         "mt-8 mb-4 scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0 last:mb-0",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   h3: ({ className, ...props }: { className?: string }) => (
-//     <h3
-//       className={cn(
-//         "mt-6 mb-4 scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 last:mb-0",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   h4: ({ className, ...props }: { className?: string }) => (
-//     <h4
-//       className={cn(
-//         "mt-6 mb-4 scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 last:mb-0",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   h5: ({ className, ...props }: { className?: string }) => (
-//     <h5
-//       className={cn(
-//         "my-4 text-lg font-semibold first:mt-0 last:mb-0",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   h6: ({ className, ...props }: { className?: string }) => (
-//     <h6
-//       className={cn("my-4 font-semibold first:mt-0 last:mb-0", className)}
-//       {...props}
-//     />
-//   ),
-//   p: ({ className, ...props }: { className?: string }) => (
-//     <p
-//       className={cn("mt-5 mb-5 leading-7 first:mt-0 last:mb-0", className)}
-//       {...props}
-//     />
-//   ),
-//   a: ({ className, ...props }: { className?: string }) => (
-//     <a
-//       className={cn(
-//         "text-primary font-medium underline underline-offset-4",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   blockquote: ({ className, ...props }: { className?: string }) => (
-//     <blockquote
-//       className={cn("border-l-2 pl-6 italic", className)}
-//       {...props}
-//     />
-//   ),
-//   ul: ({ className, ...props }: { className?: string }) => (
-//     <ul
-//       className={cn("my-5 ml-6 list-disc [&>li]:mt-2", className)}
-//       {...props}
-//     />
-//   ),
-//   ol: ({ className, ...props }: { className?: string }) => (
-//     <ol
-//       className={cn("my-5 ml-6 list-decimal [&>li]:mt-2", className)}
-//       {...props}
-//     />
-//   ),
-//   hr: ({ className, ...props }: { className?: string }) => (
-//     <hr
-//       className={cn("my-5 border-b", className)}
-//       {...props}
-//     />
-//   ),
-//   table: ({ className, ...props }: { className?: string }) => (
-//     <table
-//       className={cn(
-//         "my-5 w-full border-separate border-spacing-0 overflow-y-auto",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   th: ({ className, ...props }: { className?: string }) => (
-//     <th
-//       className={cn(
-//         "bg-muted px-4 py-2 text-left font-bold first:rounded-tl-lg last:rounded-tr-lg [&[align=center]]:text-center [&[align=right]]:text-right",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   td: ({ className, ...props }: { className?: string }) => (
-//     <td
-//       className={cn(
-//         "border-b border-l px-4 py-2 text-left last:border-r [&[align=center]]:text-center [&[align=right]]:text-right",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   tr: ({ className, ...props }: { className?: string }) => (
-//     <tr
-//       className={cn(
-//         "m-0 border-b p-0 first:border-t [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg",
-//         className,
-//       )}
-//       {...props}
-//     />
-//   ),
-//   sup: ({ className, ...props }: { className?: string }) => (
-//     <sup
-//       className={cn("[&>a]:text-xs [&>a]:no-underline", className)}
-//       {...props}
-//     />
-//   ),
-//   pre: ({ className, ...props }: { className?: string }) => (
-//     <pre
-//       className={cn(
-//         "max-w-4xl overflow-x-auto rounded-lg bg-black text-white",
-//         className,
-//       )}
-//       style={{
-//         padding: "16px 16px 12px 12px",
-//         margin: "8px 0px",
-//         color: "#f1f1f1ff",
-//         background: "#111113"
-//       }}
-//       {...props}
-//     />
-//   ),
-//   code: ({
-//     className,
-//     children,
-//     ...props
-//   }: {
-//     className?: string;
-//     children: React.ReactNode;
-//   }) => {
-//     const match = /language-(\w+)/.exec(className || "");
-
-//     if (match) {
-//       const language = match[1];
-//       const code = String(children).replace(/\n$/, "");
-
-//       return (
-//         <>
-//           <CodeHeader
-//             language={language}
-//             code={code}
-//           />
-//           <SyntaxHighlighter
-//             language={language}
-//             className={className}
-//           >
-//             {code}
-//           </SyntaxHighlighter>
-//         </>
-//       );
-//     }
-
-//     return (
-//       <code
-//         className={cn("rounded font-semibold", className)}
-//         {...props}
-//       >
-//         {children}
-//       </code>
-//     );
-//   },
-// };
 
 
-// ---- BẮT ĐẦU CHỈNH SỬA ----
 // Cập nhật các component style mặc định cho giống ChatGPT hơn
 const defaultComponents: any = {
   h1: ({ className, ...props }: { className?: string }) => (
@@ -414,14 +204,14 @@ const defaultComponents: any = {
   }: {
     className?: string;
     children: React.ReactNode;
-    // ---- BẮT ĐẦU CHỈNH SỬA ----
+  
     // Thêm node để xử lý inline code styling
     inline?: boolean;
-    // ---- KẾT THÚC CHỈNH SỬA ----
+    
   }) => {
     const match = /language-(\w+)/.exec(className || "");
 
-    // ---- BẮT ĐẦU CHỈNH SỬA ----
+  
     // Điều chỉnh logic để xử lý inline code riêng
     if (props.inline) {
        return (
@@ -436,14 +226,14 @@ const defaultComponents: any = {
         </code>
       );
     }
-    // ---- KẾT THÚC CHỈNH SỬA ----
+    
 
     if (match) {
       const language = match[1];
       const code = String(children).replace(/\n$/, "");
 
       return (
-        // ---- BẮT ĐẦU CHỈNH SỬA ----
+      
         // Sử dụng Fragment để nhóm Header và SyntaxHighlighter
         // Remove pre wrapper here as it's handled by the 'pre' component override
         <>
@@ -459,7 +249,7 @@ const defaultComponents: any = {
             {code}
           </SyntaxHighlighter>
         </>
-        // ---- KẾT THÚC CHỈNH SỬA ----
+        
       );
     }
 
@@ -474,31 +264,14 @@ const defaultComponents: any = {
     );
   },
 };
-// ---- KẾT THÚC CHỈNH SỬA ----
-
-// const MarkdownTextImpl: FC<{ children: string }> = ({ children }) => {
-//   return (
-//     <div className="markdown-content">
-//       <ReactMarkdown
-//         remarkPlugins={[remarkGfm, remarkMath]}
-//         rehypePlugins={[rehypeKatex]}
-//         components={defaultComponents}
-//       >
-//         {children}
-//       </ReactMarkdown>
-//     </div>
-//   );
-// };
-
-// export const MarkdownText = memo(MarkdownTextImpl);
 
 
 const MarkdownTextImpl: FC<{ children: string }> = ({ children }) => {
   return (
-    // ---- BẮT ĐẦU CHỈNH SỬA ----
+  
     // Thêm class để CSS targeting nếu cần
     <div className="markdown-content prose dark:prose-invert prose-sm sm:prose-base max-w-none prose-pre:p-0 prose-pre:bg-transparent prose-code:before:content-none prose-code:after:content-none">
-    {/* ---- KẾT THÚC CHỈNH SỬA ---- */}
+    {/* */}
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeKatex]}

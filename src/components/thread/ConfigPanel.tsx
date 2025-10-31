@@ -1,4 +1,4 @@
-// ---- BẮT ĐẦU CHỈNH SỬA ----
+// 
 // import React from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -79,4 +79,3 @@ export function ConfigPanel({ isOpen, onOpenChange }: ConfigPanelProps) {
         </Sheet>
     );
 }
-// ---- KẾT THÚC CHỈNH SỬA ----

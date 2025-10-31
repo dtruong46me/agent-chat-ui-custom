@@ -1,4 +1,4 @@
-// ---- START MODIFY ----
+// 
 import { parsePartialJson } from "@langchain/core/output_parsers";
 import { useStreamContext } from "@/providers/Stream";
 import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
@@ -137,7 +137,7 @@ export function AssistantMessage({
   const hasAnthropicToolCalls = !!anthropicStreamedToolCalls?.length;
   const isToolResult = message?.type === "tool";
 
-  // ---- BẮT ĐẦU LOGIC SỬA KHOẢNG CÁCH ----
+
   const hasAnyToolCall = hasToolCalls || hasAnthropicToolCalls;
   const isTextOnlyMessage = contentString && !hasAnyToolCall && !isToolResult;
 
@@ -157,7 +157,7 @@ export function AssistantMessage({
         "flex w-full flex-col gap-2",
         isTextOnlyMessage ? "mr-auto" : "" // Căn lề trái cho text, w-full cho tool
       )}>
-    {/* ---- KẾT THÚC LOGIC SỬA KHOẢNG CÁCH ---- */}
+    {/* */}
         {isToolResult ? (
           <>
             <ToolResult message={message} />
@@ -238,4 +238,3 @@ export function AssistantMessageLoading() {
     </div>
   );
 }
-// ---- END MODIFY ----

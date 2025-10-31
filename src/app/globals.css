@@ -1,4 +1,4 @@
-/* ---- START MODIFY ---- */
+
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -14,14 +14,14 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.1 0 0);
   
-  /* ---- START MODIFY ---- */
+  
   /* --primary: oklch(0.45 0.15 255);   /* A slightly muted blue */ 
   /* --primary-foreground: oklch(1 0 0); /* White text on primary */
   
   /* Thay đổi thành màu xanh lá (ChatGPT Green) */
   --primary: oklch(0.6 0.17 150);
   --primary-foreground: oklch(1 0 0);
-  /* ---- END MODIFY ---- */
+  /*  */
 
   --secondary: oklch(0.94 0.01 255); /* Very light gray */
   --secondary-foreground: oklch(0.1 0 0);
@@ -34,12 +34,12 @@
   --border: oklch(0.9 0.01 255);    /* Slightly darker border */
   --input: oklch(0.9 0.01 255);
   
-  /* ---- START MODIFY ---- */
+  
   /* --ring: oklch(0.45 0.15 255 / 0.5); /* Blue ring with opacity */
   
   /* Thay đổi ring để khớp với primary mới */
   --ring: oklch(0.6 0.17 150 / 0.5);
-  /* ---- END MODIFY ---- */
+  /*  */
 
   --radius: 0.5rem; /* Slightly less rounded */
 
@@ -72,14 +72,14 @@
   --popover: oklch(0.25 0.01 255);
   --popover-foreground: oklch(0.95 0 0);
   
-  /* ---- START MODIFY ---- */
+  
   /* --primary: oklch(0.55 0.15 255);  /* Brighter blue for dark mode */
   /* --primary-foreground: oklch(0.1 0 0); /* Dark text on primary */
 
   /* Thay đổi thành màu xanh lá (ChatGPT Green) cho dark mode */
   --primary: oklch(0.65 0.17 150);
   --primary-foreground: oklch(0.1 0 0);
-  /* ---- END MODIFY ---- */
+  /*  */
 
   --secondary: oklch(0.3 0.01 255);
   --secondary-foreground: oklch(0.95 0 0);
@@ -92,12 +92,12 @@
   --border: oklch(0.35 0.01 255);   /* Lighter border */
   --input: oklch(0.35 0.01 255);
   
-  /* ---- START MODIFY ---- */
+  
   /* --ring: oklch(0.55 0.15 255 / 0.5); */
   
   /* Thay đổi ring để khớp với primary mới */
   --ring: oklch(0.65 0.17 150 / 0.5);
-  /* ---- END MODIFY ---- */
+  /*  */
 
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -217,4 +217,4 @@
     }
   }
 }
-/* ---- END MODIFY ---- */
+/*  */

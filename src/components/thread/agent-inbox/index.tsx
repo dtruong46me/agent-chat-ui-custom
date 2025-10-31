@@ -4,9 +4,8 @@ import { useState } from "react";
 import { HumanInterrupt } from "@langchain/langgraph/prebuilt";
 import { useStreamContext } from "@/providers/Stream";
 
-// ---- BẮT ĐẦU CHỈNH SỬA ----
+
 import { cn } from "@/lib/utils";
-// ---- KẾT THÚC CHỈNH SỬA ----
 
 interface ThreadViewProps {
   interrupt: HumanInterrupt | HumanInterrupt[];

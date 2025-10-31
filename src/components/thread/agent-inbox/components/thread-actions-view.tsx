@@ -102,76 +102,9 @@ export function ThreadActionsView({
   const actionsDisabled = loading || streaming;
   const ignoreAllowed = interrupt.config.allow_ignore;
 
-  // return (
-  //   <div className="flex min-h-full w-full flex-col gap-9">
-  //     {/* Header */}
-  //     <div className="flex w-full flex-wrap items-center justify-between gap-3">
-  //       <div className="flex items-center justify-start gap-3">
-  //         <p className="text-2xl tracking-tighter text-pretty">{threadTitle}</p>
-  //         {threadId && <ThreadIdCopyable threadId={threadId} />}
-  //       </div>
-  //       <div className="flex flex-row items-center justify-start gap-2">
-  //         {apiUrl && (
-  //           <Button
-  //             size="sm"
-  //             variant="outline"
-  //             className="flex items-center gap-1 bg-white"
-  //             onClick={handleOpenInStudio}
-  //           >
-  //             Studio
-  //           </Button>
-  //         )}
-  //         <ButtonGroup
-  //           handleShowState={() => handleShowSidePanel(true, false)}
-  //           handleShowDescription={() => handleShowSidePanel(false, true)}
-  //           showingState={showState}
-  //           showingDescription={showDescription}
-  //         />
-  //       </div>
-  //     </div>
 
-  //     <div className="flex w-full flex-row items-center justify-start gap-2">
-  //       <Button
-  //         variant="outline"
-  //         className="border-gray-500 bg-white font-normal text-gray-800"
-  //         onClick={handleResolve}
-  //         disabled={actionsDisabled}
-  //       >
-  //         Mark as Resolved
-  //       </Button>
-  //       {ignoreAllowed && (
-  //         <Button
-  //           variant="outline"
-  //           className="border-gray-500 bg-white font-normal text-gray-800"
-  //           onClick={handleIgnore}
-  //           disabled={actionsDisabled}
-  //         >
-  //           Ignore
-  //         </Button>
-  //       )}
-  //     </div>
-
-  //     {/* Actions */}
-  //     <InboxItemInput
-  //       acceptAllowed={acceptAllowed}
-  //       hasEdited={hasEdited}
-  //       hasAddedResponse={hasAddedResponse}
-  //       interruptValue={interrupt}
-  //       humanResponse={humanResponse}
-  //       initialValues={initialHumanInterruptEditValue.current}
-  //       setHumanResponse={setHumanResponse}
-  //       streaming={streaming}
-  //       streamFinished={streamFinished}
-  //       supportsMultipleMethods={supportsMultipleMethods}
-  //       setSelectedSubmitType={setSelectedSubmitType}
-  //       setHasAddedResponse={setHasAddedResponse}
-  //       setHasEdited={setHasEdited}
-  //       handleSubmit={handleSubmit}
-  //     />
-  //   </div>
-  // );
   return (
-    // ---- BẮT ĐẦU CHỈNH SỬA ----
+    // 
     // Giảm gap, margin, padding
     <div className="flex min-h-full w-full flex-col gap-4">
       {/* Header */}
@@ -192,7 +125,7 @@ export function ThreadActionsView({
               Studio
             </Button>
           )}
-          {/* ---- BẮT ĐẦU SỬA LỖI 1 ---- */}
+          {/* */}
           {/* Thêm lại đầy đủ props cho ButtonGroup */}
           <ButtonGroup
             handleShowState={() => handleShowSidePanel(true, false)}
@@ -200,7 +133,7 @@ export function ThreadActionsView({
             showingState={showState}
             showingDescription={showDescription}
           />
-          {/* ---- KẾT THÚC SỬA LỖI 1 ---- */}
+          {/*  */}
         </div>
       </div>
 
@@ -228,7 +161,7 @@ export function ThreadActionsView({
         )}
       </div>
 
-      {/* ---- BẮT ĐẦU SỬA LỖI 2 ---- */}
+      {/* */}
       {/* Thêm lại đầy đủ props cho InboxItemInput */}
       <InboxItemInput
         acceptAllowed={acceptAllowed}
@@ -246,8 +179,8 @@ export function ThreadActionsView({
         setHasEdited={setHasEdited}
         handleSubmit={handleSubmit}
       />
-      {/* ---- KẾT THÚC SỬA LỖI 2 ---- */}
+      {/* */}
     </div>
-    // ---- KẾT THÚC CHỈNH SỬA ----
+
   );
 }

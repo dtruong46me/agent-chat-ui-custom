@@ -1,11 +1,11 @@
-// ---- START MODIFY ----
+// 
 import { AIMessage, ToolMessage } from "@langchain/langgraph-sdk";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-// ---- START MODIFY ----
+// 
 // Thêm icon Wrench (công cụ)
 import { ChevronDown, ChevronUp, CheckCircle, AlertCircle, Wrench } from "lucide-react";
-// ---- END MODIFY ----
+// 
 import { cn } from "@/lib/utils"; // Import cn
 
 function isComplexValue(value: any): boolean {
@@ -48,11 +48,11 @@ function SingleToolCall({ toolCall }: { toolCall: NonNullable<AIMessage["tool_ca
         className="flex w-full items-center justify-between bg-muted/30 px-3 py-2 text-left text-sm"
       >
         <span className="flex items-center gap-2 font-medium text-foreground">
-          {/* ---- START MODIFY ---- */}
+          {/*  */}
           <Wrench className="h-4 w-4 text-muted-foreground" />
           {/* Hiển thị tên tool bằng font code */}
           <code className="font-medium">{toolCall.name}</code>
-          {/* ---- END MODIFY ---- */}
+          {/*  */}
         </span>
         <span className="flex items-center gap-2">
            {toolCallId && (
@@ -66,9 +66,9 @@ function SingleToolCall({ toolCall }: { toolCall: NonNullable<AIMessage["tool_ca
       {/* Nội dung có thể thu gọn - chỉ render nếu có args */}
       {hasArgs && (
         <div className="bg-background/50">
-          {/* ---- START MODIFY ---- */}
+          {/*  */}
           {/* ĐÃ XÓA NHÃN "Arguments" */}
-          {/* ---- END MODIFY ---- */}
+          {/*  */}
           <motion.pre
             className="whitespace-pre-wrap break-all font-mono text-xs text-foreground px-3 py-2 overflow-hidden" // Thêm padding
             initial={false}
@@ -114,11 +114,11 @@ export function ToolCalls({
   if (!toolCalls || toolCalls.length === 0) return null;
 
   return (
-    // ---- START MODIFY ----
+    // 
     // Căn giữa, giới hạn chiều rộng
     <div className="mx-auto w-[80%] md:w-[75%] flex flex-col gap-2">
       {/* ĐÃ XÓA NHÃN "Tool Calls" */}
-    {/* ---- END MODIFY ---- */}
+    {/*  */}
       {toolCalls.map((tc, idx) => (
          <SingleToolCall key={tc.id || `toolcall-${idx}`} toolCall={tc} />
       ))}
@@ -174,10 +174,10 @@ export function ToolResult({ message }: { message: ToolMessage }) {
   const shouldTruncate = hasContent && (contentStr.length > maxLengthCollapsed || contentStr.split('\n').length > maxLinesCollapsed);
 
   return (
-    // ---- START MODIFY ----
+    // 
     // Căn giữa, giới hạn chiều rộng
     <div className="mx-auto w-[80%] md:w-[75%]">
-    {/* ---- END MODIFY ---- */}
+    {/*  */}
       <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
         {/* Header với trạng thái, tên, ID */}
         <div className={cn(
@@ -198,9 +198,9 @@ export function ToolResult({ message }: { message: ToolMessage }) {
         {/* Nội dung có thể thu gọn - chỉ render nếu có content */}
         {hasContent && (
           <div className="bg-background/50">
-            {/* ---- START MODIFY ---- */}
+            {/*  */}
             {/* ĐÃ XÓA NHÃN "Result" */}
-            {/* ---- END MODIFY ---- */}
+            {/*  */}
             <motion.pre
               className="whitespace-pre-wrap break-all font-mono text-xs text-foreground px-3 py-2 overflow-hidden" // Thêm padding
               initial={false}
@@ -237,4 +237,4 @@ export function ToolResult({ message }: { message: ToolMessage }) {
     </div>
   );
 }
-// ---- END MODIFY ----
+// 

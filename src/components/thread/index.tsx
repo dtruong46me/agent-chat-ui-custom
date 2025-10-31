@@ -1,9 +1,9 @@
-// ---- START MODIFY ----
+// 
 import { v4 as uuidv4 } from "uuid";
-// ---- START MODIFY ----
+// 
 // import { ReactNode, useEffect, useRef } from "react";
 import { ReactNode, useEffect, useRef, KeyboardEvent } from "react"; // Đã thêm KeyboardEvent
-// ---- END MODIFY ----
+// 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useStreamContext } from "@/providers/Stream";
@@ -27,9 +27,9 @@ import {
   XIcon,
   Plus,
   CircleX,
-  // ---- START MODIFY ----
+  // 
   Settings, // Thêm icon Settings
-  // ---- END MODIFY ----
+  // 
 } from "lucide-react";
 import { useQueryState, parseAsBoolean } from "nuqs";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
@@ -62,20 +62,18 @@ import {
   // ReactNode,
   // KeyboardEvent, // Thêm KeyboardEvent
 } from "react";
-// ---- START MODIFY ----
+// 
 // import { ThemeProvider } from "next-themes"; // Sửa lỗi 1 (lỗi này đã được sửa trong file của bạn)
-// ---- END MODIFY ----
+// 
 // import { LangGraphLogoSVG } from "@/components/logo"; // Sửa lỗi 2: Thay thế bằng logo thật
 
-// ---- BẮT ĐẦU CHỈNH SỬA ----
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
-// ---- KẾT THÚC CHỈNH SỬA ----
 
-// ---- BẮT ĐẦU CHỈNH SỬA ----
+
 import { ConfigPanel } from "./ConfigPanel";
 // import { Settings } from "lucide-react"; // Import Settings icon (đã chuyển lên trên)
-// ---- KẾT THÚC CHỈNH SỬA ----
+
 
 
 
@@ -91,10 +89,10 @@ function ThemeToggle() {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            // ---- START MODIFY ----
+            // 
             // className="h-8 w-8" // Kích thước nhỏ hơn
             className="h-8 w-8 cursor-pointer" // Thêm cursor-pointer
-            // ---- END MODIFY ----
+            // 
           >
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -108,7 +106,7 @@ function ThemeToggle() {
     </TooltipProvider>
   );
 }
-// ---- KẾT THÚC CHỈNH SỬA ----
+
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -159,10 +157,10 @@ function OpenGitHubRepo() {
           <a
             href="https://github.com/langchain-ai/agent-chat-ui"
             target="_blank"
-            // ---- START MODIFY ----
+            // 
             // className="flex items-center justify-center"
             className="flex items-center justify-center cursor-pointer opacity-80 hover:opacity-100" // Thêm cursor-pointer và hover
-            // ---- END MODIFY ----
+            // 
           >
             <GitHubSVG
               width="24"
@@ -219,9 +217,9 @@ export function Thread() {
     setArtifactContext({});
   };
 
-  // ---- BẮT ĐẦU CHỈNH SỬA ----
+
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
-  // ---- KẾT THÚC CHỈNH SỬA ----
+  
 
   useEffect(() => {
     if (!stream.error) {
@@ -322,7 +320,7 @@ export function Thread() {
     (m) => m.type === "ai" || m.type === "tool",
   );
 
-    // ---- SỬA LỖI 4: ĐỊNH NGHĨA HÀM handleKeyDown ----
+
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (
       e.key === "Enter" &&
@@ -335,8 +333,6 @@ export function Thread() {
       form?.requestSubmit();
     }
   };
-  // ---- KẾT THÚC SỬA LỖI 4 ----
-
 
 
   return (
@@ -412,7 +408,7 @@ export function Thread() {
               
               <div className="absolute top-2 right-4 flex items-center gap-2"> {/* Thêm gap-2 */}
                 <ThemeToggle /> {/* Thêm nút Theme Toggle */}
-                {/* ---- START MODIFY ---- */}
+                {/*  */}
                 {/* Thêm nút Config Panel */}
                 <TooltipIconButton
                   size="icon"
@@ -423,7 +419,7 @@ export function Thread() {
                 >
                   <Settings className="size-4" />
                 </TooltipIconButton>
-                {/* ---- END MODIFY ---- */}
+                {/*  */}
                 <OpenGitHubRepo />
               </div>
 
@@ -480,7 +476,7 @@ export function Thread() {
                   <OpenGitHubRepo />
                 </div> */}
                 
-                {/* ---- START MODIFY ---- */}
+                {/*  */}
                 {/* Thêm nút Config Panel */}
                 <TooltipIconButton
                   size="icon"
@@ -491,15 +487,15 @@ export function Thread() {
                 >
                   <Settings className="size-4" />
                 </TooltipIconButton>
-                {/* ---- END MODIFY ---- */}
+                {/*  */}
                 
                 <TooltipIconButton
-                  // ---- START MODIFY ----
+                  // 
                   // size="lg"
                   // className="p-4"
                   size="icon" // Thay đổi size
                   className="h-8 w-8" // Thay đổi className
-                  // ---- END MODIFY ----
+                  // 
                   tooltip="New thread"
                   variant="ghost"
                   onClick={() => setThreadId(null)}
@@ -513,13 +509,13 @@ export function Thread() {
             </div>
           )}
 
-          {/* ---- START MODIFY ---- */}
+          {/*  */}
           {/* Thêm ConfigPanel component */}
           <ConfigPanel
             isOpen={isConfigPanelOpen}
             onOpenChange={setIsConfigPanelOpen}
           />
-          {/* ---- END MODIFY ---- */}
+          {/*  */}
 
           <StickToBottom className="relative flex-1 overflow-hidden">
             <StickyToBottomContent
@@ -536,7 +532,7 @@ export function Thread() {
               contentClassName="pt-8 pb-16  max-w-3xl mx-auto flex flex-col gap-4 w-full"
               content={
                 <>
-                  {/* ---- START MODIFY ---- */}
+                  {/*  */}
                   {/* Sửa lỗi khoảng trống khi Hide Tool Calls */}
                   {messages
                     .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
@@ -561,7 +557,7 @@ export function Thread() {
                         />
                       );
                     })}
-                  {/* ---- END MODIFY ---- */}
+                  {/*  */}
                     
                   {/* {messages
                     .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
@@ -630,7 +626,7 @@ export function Thread() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onPaste={handlePaste}
-                        // ---- START MODIFY ----
+                        // 
                         // onKeyDown={(e) => {
                         //   if (
                         //     e.key === "Enter" &&
@@ -646,7 +642,7 @@ export function Thread() {
                         // }}
                         // Sử dụng hàm handleKeyDown đã định nghĩa
                         onKeyDown={handleKeyDown}
-                        // ---- END MODIFY ----
+                        // 
                         placeholder="Type your message..."
                         className="field-sizing-content resize-none border-none bg-transparent p-3.5 pb-0 shadow-none ring-0 outline-none focus:ring-0 focus:outline-none"
                       />
@@ -731,4 +727,4 @@ export function Thread() {
     </div>
   );
 }
-// ---- END MODIFY ----
+// 

@@ -1,4 +1,4 @@
-// ---- START MODIFY ----
+// 
 "use client";
 
 import { forwardRef } from "react";
@@ -29,10 +29,10 @@ export const TooltipIconButton = forwardRef<
             variant="ghost"
             size="icon"
             {...rest}
-            // ---- START MODIFY ----
+            // 
             // className={cn("size-6 p-1", className)}
             className={cn("size-6 p-1 cursor-pointer", className)} // Thêm cursor-pointer
-            // ---- END MODIFY ----
+            
             ref={ref}
           >
             {children}
@@ -46,4 +46,3 @@ export const TooltipIconButton = forwardRef<
 });
 
 TooltipIconButton.displayName = "TooltipIconButton";
-// ---- END MODIFY ----

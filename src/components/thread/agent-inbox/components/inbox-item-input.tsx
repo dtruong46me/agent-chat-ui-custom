@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 // import { toast } from "sonner";
 // import { Separator } from "@/components/ui/separator";
 
-// ---- BẮT ĐẦU CHỈNH SỬA ----
+
 import { Undo2, Pencil, Check, X } from "lucide-react"; // Thêm icons
 import { MarkdownText } from "../../markdown-text";
 import { ActionRequest, HumanInterrupt } from "@langchain/langgraph/prebuilt";
@@ -17,9 +17,9 @@ import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { SyntaxHighlighter } from "../../syntax-highlighter"; // Import SyntaxHighlighter
 import { cn } from "@/lib/utils"; // Import cn
-// ---- KẾT THÚC CHỈNH SỬA ----
 
-// ---- BẮT ĐẦU CHỈNH SỬA ----
+
+
 // Component mới để chỉnh sửa Code Block
 interface CodeEditorProps {
   initialCode: string;
@@ -444,62 +444,6 @@ function EditAndOrAcceptComponent({
     }
   };
 
-  // return (
-  //   <div className="flex w-full flex-col items-start gap-4 rounded-lg border-[1px] border-gray-300 p-6">
-  //     <div className="flex w-full items-center justify-between">
-  //       <p className="text-base font-semibold text-black">{header}</p>
-  //       <ResetButton handleReset={handleReset} />
-  //     </div>
-
-  //     {Object.entries(editResponse.args.args).map(([k, v], idx) => {
-  //       const value = ["string", "number"].includes(typeof v)
-  //         ? v
-  //         : JSON.stringify(v, null);
-  //       // Calculate the default number of rows by the total length of the initial value divided by 30
-  //       // or 8, whichever is greater. Stored in a ref to prevent re-rendering.
-  //       if (
-  //         defaultRows.current[k as keyof typeof defaultRows.current] ===
-  //         undefined
-  //       ) {
-  //         defaultRows.current[k as keyof typeof defaultRows.current] = !v.length
-  //           ? 3
-  //           : Math.max(v.length / 30, 7);
-  //       }
-  //       const numRows =
-  //         defaultRows.current[k as keyof typeof defaultRows.current] || 8;
-
-  //       return (
-  //         <div
-  //           className="flex h-full w-full flex-col items-start gap-1 px-[1px]"
-  //           key={`allow-edit-args--${k}-${idx}`}
-  //         >
-  //           <div className="flex w-full flex-col items-start gap-[6px]">
-  //             <p className="min-w-fit text-sm font-medium">{prettifyText(k)}</p>
-  //             <Textarea
-  //               disabled={streaming}
-  //               className="h-full"
-  //               value={value}
-  //               onChange={(e) => onEditChange(e.target.value, editResponse, k)}
-  //               onKeyDown={handleKeyDown}
-  //               rows={numRows}
-  //             />
-  //           </div>
-  //         </div>
-  //       );
-  //     })}
-
-  //     <div className="flex w-full items-center justify-end gap-2">
-  //       <Button
-  //         variant="brand"
-  //         disabled={streaming}
-  //         onClick={handleSubmit}
-  //       >
-  //         {buttonText}
-  //       </Button>
-  //     </div>
-  //   </div>
-  // );
-
   return (
     <div className="flex w-full flex-col items-start gap-3 rounded-lg border border-border bg-card p-4 shadow-sm"> {/* Giảm padding, gap, đổi style */}
       <div className="flex w-full items-center justify-between">
@@ -628,7 +572,6 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
       hitlType = 'accept_only';
   }
 
-  // ---- SỬA 2: Mở rộng kiểu sự kiện cho 'e' ----
   // Đổi kiểu của `e` để chấp nhận cả MouseEvent và KeyboardEvent
   const handleSubmitDecline = async (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Element>) => {
       const declineResponse = humanResponse.find(r => r.type === 'ignore');
@@ -640,7 +583,6 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
       }
   };
 
-  // ---- SỬA 3: Mở rộng kiểu sự kiện cho 'e' ----
   // Đổi kiểu của `e` để chấp nhận cả MouseEvent và KeyboardEvent
   const handleSubmitAccept = async (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<Element>) => {
       const acceptResponse = humanResponse.find(r => r.type === 'accept');
@@ -803,48 +745,9 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
     });
   };
 
-  // return (
-  //   <div className="flex w-full flex-col items-start justify-start gap-2">
-  //     {showArgsOutsideActionCards && (
-  //       <ArgsRenderer args={interruptValue.action_request.args} />
-  //     )}
-
-  //     <div className="flex w-full flex-col items-start gap-2">
-  //       <EditAndOrAccept
-  //         humanResponse={humanResponse}
-  //         streaming={streaming}
-  //         initialValues={initialValues}
-  //         interruptValue={interruptValue}
-  //         onEditChange={onEditChange}
-  //         handleSubmit={handleSubmit}
-  //       />
-  //       {supportsMultipleMethods ? (
-  //         <div className="mx-auto mt-3 flex items-center gap-3">
-  //           <Separator className="w-[full]" />
-  //           <p className="text-sm text-gray-500">Or</p>
-  //           <Separator className="w-full" />
-  //         </div>
-  //       ) : null}
-  //       <Response
-  //         humanResponse={humanResponse}
-  //         streaming={streaming}
-  //         showArgsInResponse={showArgsInResponse}
-  //         interruptValue={interruptValue}
-  //         onResponseChange={onResponseChange}
-  //         handleSubmit={handleSubmit}
-  //       />
-  //       {streaming && <p className="text-sm text-gray-600">Running...</p>}
-  //       {streamFinished && (
-  //         <p className="text-base font-medium text-green-600">
-  //           Successfully finished Graph invocation.
-  //         </p>
-  //       )}
-  //     </div>
-  //   </div>
-  // );
   return (
     <div className="flex w-full flex-col items-start justify-start gap-2">
-      {/* ---- BẮT ĐẦU CHỈNH SỬA ---- */}
+      {/*  */}
       {/* Render component dựa trên hitlType */}
        {hitlType === 'none' && (
          <p className="text-sm text-muted-foreground p-4 text-center w-full">No action required from user.</p>
@@ -872,7 +775,7 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
             initialValues={initialValues}
             interruptValue={interruptValue}
             onEditChange={onEditChange}
-            // ---- SỬA 4: Thêm 'async' vào hàm ----
+
             handleSubmit={async (e) => {
                  if (acceptAllowed && !hasEdited) {
                      setSelectedSubmitType('accept');
@@ -891,7 +794,7 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
             showArgsInResponse={showArgsInResponse}
             interruptValue={interruptValue}
             onResponseChange={onResponseChange}
-            // ---- SỬA 5: Thêm 'async' vào hàm ----
+
             handleSubmit={async (e) => {
                 setSelectedSubmitType('response');
                 await handleSubmit(e); // Sử dụng await
@@ -917,7 +820,7 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
             </p>
         )}
       </div>
-      {/* ---- KẾT THÚC CHỈNH SỬA ---- */}
+      {/*  */}
     </div>
   );
 }

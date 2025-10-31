@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // ---- BẮT ĐẦU CHỈNH SỬA ----
+    // 
     // Xóa khoảng trắng và dấu xuống dòng giữa <html> và <body>
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -56,6 +56,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-    // ---- KẾT THÚC CHỈNH SỬA ----
+    // 
   );
 }
