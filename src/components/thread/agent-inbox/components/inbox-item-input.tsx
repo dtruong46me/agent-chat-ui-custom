@@ -1,3 +1,4 @@
+// ---- START MODIFY ----
 import { HumanResponseWithEdits, SubmitType } from "../types";
 import { Textarea } from "@/components/ui/textarea";
 import React, { useState } from "react";
@@ -177,14 +178,16 @@ function ArgsRenderer({ args }: { args: Record<string, any> }) {
         return (
           <div
             key={`args-${k}`}
-            className="flex flex-col items-start gap-1"
+            className="flex w-full flex-col items-start gap-1"
           >
-            <p className="text-sm leading-[18px] text-wrap text-gray-600">
+            {/* ---- FIX: Đổi text-gray-600 thành text-muted-foreground ---- */}
+            <p className="text-sm leading-[18px] text-wrap text-muted-foreground">
               {prettifyText(k)}:
             </p>
-            <span className="w-full max-w-full rounded-xl bg-zinc-100 p-3 text-[13px] leading-[18px] text-black">
+            {/* ---- FIX: Bỏ span nền sáng, dùng div với text-foreground ---- */}
+            <div className="w-full max-w-full text-[13px] leading-[18px] text-foreground">
               <MarkdownText>{value}</MarkdownText>
-            </span>
+            </div>
           </div>
         );
       })}
@@ -247,47 +250,6 @@ function ResponseComponent({
       handleSubmit(e);
     }
   };
-
-  // return (
-  //   <div className="flex w-full flex-col items-start gap-4 rounded-xl border-[1px] border-gray-300 p-6">
-  //     <div className="flex w-full items-center justify-between">
-  //       <p className="text-base font-semibold text-black">
-  //         Respond to assistant
-  //       </p>
-  //       <ResetButton
-  //         handleReset={() => {
-  //           onResponseChange("", res);
-  //         }}
-  //       />
-  //     </div>
-
-  //     {showArgsInResponse && (
-  //       <ArgsRenderer args={interruptValue.action_request.args} />
-  //     )}
-
-  //     <div className="flex w-full flex-col items-start gap-[6px]">
-  //       <p className="min-w-fit text-sm font-medium">Response</p>
-  //       <Textarea
-  //         disabled={streaming}
-  //         value={res.args}
-  //         onChange={(e) => onResponseChange(e.target.value, res)}
-  //         onKeyDown={handleKeyDown}
-  //         rows={4}
-  //         placeholder="Your response here..."
-  //       />
-  //     </div>
-
-  //     <div className="flex w-full items-center justify-end gap-2">
-  //       <Button
-  //         variant="brand"
-  //         disabled={streaming}
-  //         onClick={handleSubmit}
-  //       >
-  //         Send Response
-  //       </Button>
-  //     </div>
-  //   </div>
-  // );
 
   return (
      <div className="flex w-full flex-col items-start gap-3 rounded-lg border border-border bg-card p-4 shadow-sm"> {/* Giảm padding, gap, đổi style */}
@@ -747,7 +709,7 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
 
   return (
     <div className="flex w-full flex-col items-start justify-start gap-2">
-      {/*  */}
+      {/* */}
       {/* Render component dựa trên hitlType */}
        {hitlType === 'none' && (
          <p className="text-sm text-muted-foreground p-4 text-center w-full">No action required from user.</p>
@@ -820,7 +782,8 @@ let hitlType: 'yesno' | 'text' | 'edit' | 'accept_only' | 'none' = 'none';
             </p>
         )}
       </div>
-      {/*  */}
+      {/* */}
     </div>
   );
 }
+// ---- END MODIFY ----

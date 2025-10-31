@@ -1,3 +1,4 @@
+// ---- START MODIFY ----
 "use client";
 
 import "./markdown-styles.css";
@@ -10,7 +11,7 @@ import { FC, memo, useState } from "react";
 // import { CheckIcon, CopyIcon } from "lucide-react";
 import { SyntaxHighlighter } from "@/components/thread/syntax-highlighter";
 
-import { TooltipIconButton } from "@/components/thread/tooltip-icon-button";
+// import { TooltipIconButton } from "@/components/thread/tooltip-icon-button"; // Không dùng nữa
 import { cn } from "@/lib/utils";
 
 import "katex/dist/katex.min.css";
@@ -45,10 +46,43 @@ const useCopyToClipboard = ({
 };
 
 
+// const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
+//   const { isCopied, copyToClipboard } = useCopyToClipboard();
+
+//   const { theme } = useTheme(); // Lấy theme hiện tại
+  
+//   const onCopy = () => {
+//     if (!code || isCopied) return;
+//     copyToClipboard(code);
+//   };
+
+//   return (
+  
+//     // Thay đổi background và text color dựa trên theme
+//     <div className={cn(
+//         "flex items-center justify-between gap-4 rounded-t-md px-4 py-1.5 text-xs",
+//         theme === 'dark' ? "bg-black text-gray-400" : "bg-gray-800 text-gray-300"
+//     )}>
+//       <span className="font-sans">{language}</span>
+//     {/* Thay TooltipIconButton bằng Button thường có text */}
+//       <button
+//         onClick={onCopy}
+//         className={cn(
+//           "flex items-center gap-1.5 h-6 px-2 rounded-md text-xs font-sans", // Thêm class mới
+//           theme === 'dark' ? "text-gray-400 hover:bg-gray-700 hover:text-gray-100 cursor-pointer" : "text-gray-300 hover:bg-gray-600 hover:text-gray-100 cursor-pointer"
+//         )}
+//       >
+//         {!isCopied && <CopyIcon className="h-4 w-4" />}
+//         {isCopied && <CheckIcon className="h-4 w-4 text-green-500" />}
+//         <span>{isCopied ? "Copied" : "Copy"}</span>
+//       </button>
+//     </div>
+//   );
+// };
+
 const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard();
-
-  const { theme } = useTheme(); // Lấy theme hiện tại
+  const { theme } = useTheme();
   
   const onCopy = () => {
     if (!code || isCopied) return;
@@ -56,27 +90,23 @@ const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
   };
 
   return (
-  
-    // Thay đổi background và text color dựa trên theme
+    // ---- CHANGE 1: Bỏ bo góc (rounded-t-md) vì component cha sẽ xử lý ----
     <div className={cn(
-        "flex items-center justify-between gap-4 rounded-t-md px-4 py-1.5 text-xs",
+        "flex items-center justify-between gap-4 px-4 py-1.5 text-xs",
         theme === 'dark' ? "bg-black text-gray-400" : "bg-gray-800 text-gray-300"
     )}>
       <span className="font-sans">{language}</span>
-    {/* */}
-      <TooltipIconButton
-        tooltip="Copy code"
+      <button
         onClick={onCopy}
-      
         className={cn(
-          "h-6 w-6 p-1",
+          "flex items-center gap-1.5 h-6 px-2 rounded-md text-xs font-sans cursor-pointer",
           theme === 'dark' ? "text-gray-400 hover:bg-gray-700 hover:text-gray-100" : "text-gray-300 hover:bg-gray-600 hover:text-gray-100"
         )}
-        
       >
         {!isCopied && <CopyIcon className="h-4 w-4" />}
         {isCopied && <CheckIcon className="h-4 w-4 text-green-500" />}
-      </TooltipIconButton>
+        <span>{isCopied ? "Copied" : "Copy"}</span>
+      </button>
     </div>
   );
 };
@@ -185,18 +215,36 @@ const defaultComponents: any = {
   td: ({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
     <td className={cn("p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)} {...props} />
   ),
+  // pre: ({ className, children, ...props }: { className?: string, children: React.ReactNode }) => {
+  //    // Apply dark background for code blocks regardless of theme for contrast
+  //    // Apply dark background for code blocks regardless of theme for contrast, remove rounded-lg for header integration
+  //   return (
+  //     <pre
+  //       className={cn("!p-0 mb-4 mt-6 overflow-x-auto rounded-b-md bg-gray-900 py-4 font-mono text-sm", className)}
+  //       {...props}
+  //     >
+  //       {children}
+  //     </pre>
+  //   )
+  // },
+
+  // ---- CHANGE 2: Biến thẻ <pre> thành container chính ----
   pre: ({ className, children, ...props }: { className?: string, children: React.ReactNode }) => {
-     // Apply dark background for code blocks regardless of theme for contrast
-     // Apply dark background for code blocks regardless of theme for contrast, remove rounded-lg for header integration
     return (
-      <pre
-        className={cn("mb-4 mt-6 overflow-x-auto rounded-b-md bg-gray-900 py-4 font-mono text-sm", className)}
-        {...props}
+      // Dùng <div> thay <pre> để làm container
+      // Thêm border, bo tròn 4 góc (rounded-md), và overflow-hidden
+      <div
+        className={cn(
+          "my-6 overflow-hidden rounded-md border border-gray-700 bg-gray-900",
+          className
+        )}
       >
         {children}
-      </pre>
+      </div>
     )
   },
+
+
   code: ({
     className,
     children,
@@ -204,15 +252,10 @@ const defaultComponents: any = {
   }: {
     className?: string;
     children: React.ReactNode;
-  
-    // Thêm node để xử lý inline code styling
     inline?: boolean;
-    
   }) => {
     const match = /language-(\w+)/.exec(className || "");
 
-  
-    // Điều chỉnh logic để xử lý inline code riêng
     if (props.inline) {
        return (
         <code
@@ -227,33 +270,26 @@ const defaultComponents: any = {
       );
     }
     
-
     if (match) {
       const language = match[1];
       const code = String(children).replace(/\n$/, "");
 
       return (
-      
-        // Sử dụng Fragment để nhóm Header và SyntaxHighlighter
-        // Remove pre wrapper here as it's handled by the 'pre' component override
         <>
           <CodeHeader
             language={language}
             code={code}
           />
-          <SyntaxHighlighter
-            language={language}
-            // Loại bỏ className mặc định có thể gây xung đột
-            className=""
-          >
-            {code}
-          </SyntaxHighlighter>
+          {/* ---- CHANGE 3: Thêm padding và scroll cho vùng code ---- */}
+          <div className="overflow-x-auto p-0 font-mono text-sm">
+            <SyntaxHighlighter language={language}>
+              {code}
+            </SyntaxHighlighter>
+          </div>
         </>
-        
       );
     }
 
-    // Fallback cho code không có language match (sẽ không nên xảy ra nếu pre xử lý đúng)
     return (
       <code
         className={cn("rounded font-semibold", className)}
@@ -284,3 +320,4 @@ const MarkdownTextImpl: FC<{ children: string }> = ({ children }) => {
 };
 
 export const MarkdownText = memo(MarkdownTextImpl);
+// ---- END MODIFY ----

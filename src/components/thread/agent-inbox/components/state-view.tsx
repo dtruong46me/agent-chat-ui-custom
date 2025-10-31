@@ -1,3 +1,4 @@
+// ---- START MODIFY ----
 import { ChevronRight, X, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -55,7 +56,8 @@ function MessagesRenderer({ messages }: { messages: BaseMessage[] }) {
             key={msg.id ?? `message-${idx}`}
             className="ml-2 flex w-full flex-col gap-[2px]"
           >
-            <p className="font-medium text-gray-700">{messageTypeLabel}:</p>
+            {/* ---- FIX: Đổi màu nhãn thành text-muted-foreground ---- */}
+            <p className="font-medium text-muted-foreground">{messageTypeLabel}:</p>
             {content && <MarkdownText>{content}</MarkdownText>}
             {"tool_calls" in msg && msg.tool_calls ? (
               <div className="flex w-full flex-col items-start gap-1">
@@ -77,7 +79,7 @@ function MessagesRenderer({ messages }: { messages: BaseMessage[] }) {
 function StateViewRecursive(props: StateViewRecursiveProps) {
   const date = unknownToPrettyDate(props.value);
   if (date) {
-    return <p className="font-light text-gray-600">{date}</p>;
+    return <p className="font-light text-muted-foreground">{date}</p>;
   }
 
   if (["string", "number"].includes(typeof props.value)) {
@@ -89,7 +91,7 @@ function StateViewRecursive(props: StateViewRecursiveProps) {
   }
 
   if (props.value == null) {
-    return <p className="font-light whitespace-pre-wrap text-gray-600">null</p>;
+    return <p className="font-light whitespace-pre-wrap text-muted-foreground">null</p>;
   }
 
   if (Array.isArray(props.value)) {
@@ -100,7 +102,8 @@ function StateViewRecursive(props: StateViewRecursiveProps) {
     const valueArray = props.value as unknown[];
     return (
       <div className="flex w-full flex-row items-start justify-start gap-1">
-        <span className="font-normal text-black">[</span>
+        {/* ---- FIX: Đổi màu ký tự thành text-foreground ---- */}
+        <span className="font-normal text-foreground">[</span>
         {valueArray.map((item, idx) => {
           const itemRenderValue = baseMessageObject(item);
           return (
@@ -110,19 +113,19 @@ function StateViewRecursive(props: StateViewRecursiveProps) {
             >
               <StateViewRecursive value={itemRenderValue} />
               {idx < valueArray?.length - 1 && (
-                <span className="font-normal text-black">,&nbsp;</span>
+                <span className="font-normal text-foreground">,&nbsp;</span>
               )}
             </div>
           );
         })}
-        <span className="font-normal text-black">]</span>
+        <span className="font-normal text-foreground">]</span>
       </div>
     );
   }
 
   if (typeof props.value === "object") {
     if (Object.keys(props.value).length === 0) {
-      return <p className="font-light text-gray-600">{"{}"}</p>;
+      return <p className="font-light text-muted-foreground">{"{}"}</p>;
     }
     return (
       <div className="relative ml-6 flex w-full flex-col items-start justify-start gap-1">
@@ -155,6 +158,7 @@ function HasContentsEllipsis({ onClick }: { onClick?: () => void }) {
       className={cn(
         "rounded-md p-[2px] font-mono text-[10px] leading-3",
         "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800",
+        "dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-gray-100", // Thêm style dark mode
         "cursor-pointer transition-colors ease-in-out",
         "inline-block -translate-y-[2px]",
       )}
@@ -192,13 +196,14 @@ export function StateViewObject(props: StateViewProps) {
       >
         <div
           onClick={() => setExpanded((prev) => !prev)}
-          className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md text-gray-500 transition-colors ease-in-out hover:bg-gray-100 hover:text-black"
+          className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md text-gray-500 transition-colors ease-in-out hover:bg-gray-100 hover:text-black dark:hover:bg-gray-700 dark:hover:text-white" // Thêm style dark
         >
           <ChevronRight className="h-4 w-4" />
         </div>
       </motion.div>
       <div className="flex w-full flex-col items-start justify-start gap-1">
-        <p className="font-normal text-black">
+        {/* ---- FIX: Đổi text-black thành text-foreground ---- */}
+        <p className="font-normal text-foreground">
           {prettifyText(props.keyName)}{" "}
           {!expanded && (
             <HasContentsEllipsis onClick={() => setExpanded((prev) => !prev)} />
@@ -301,3 +306,4 @@ export function StateView({
     </div>
   );
 }
+// ---- END MODIFY ----

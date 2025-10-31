@@ -1,3 +1,4 @@
+// ---- START MODIFY ----
 // 
 import { v4 as uuidv4 } from "uuid";
 // 
@@ -38,7 +39,7 @@ import { toast } from "sonner";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
-import { GitHubSVG } from "../icons/github";
+import { GitHubSVG } from "../icons/github"; // Vẫn import nhưng không sử dụng
 import {
   Tooltip,
   TooltipContent,
@@ -337,6 +338,7 @@ export function Thread() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
+      {/* Panel bên trái (History) */}
       <div className="relative hidden lg:flex">
         <motion.div
           className="absolute z-20 h-full overflow-hidden border-r bg-white"
@@ -376,11 +378,8 @@ export function Thread() {
           layout={isLargeScreen}
           animate={{
             marginLeft: chatHistoryOpen ? (isLargeScreen ? 300 : 0) : 0,
-            width: chatHistoryOpen
-              ? isLargeScreen
-                ? "calc(100% - 300px)"
-                : "100%"
-              : "100%",
+            marginRight: isConfigPanelOpen ? (isLargeScreen ? 350 : 0) : 0, // Thêm marginRight
+            // Xóa 'width' khỏi animation, flex-1 sẽ xử lý
           }}
           transition={
             isLargeScreen
@@ -407,9 +406,9 @@ export function Thread() {
               </div>
               
               <div className="absolute top-2 right-4 flex items-center gap-2"> {/* Thêm gap-2 */}
-                <ThemeToggle /> {/* Thêm nút Theme Toggle */}
-                {/*  */}
-                {/* Thêm nút Config Panel */}
+                <ThemeToggle /> {/* 1. Theme Toggle */}
+                
+                {/* 2. Config Panel */}
                 <TooltipIconButton
                   size="icon"
                   className="h-8 w-8"
@@ -419,13 +418,9 @@ export function Thread() {
                 >
                   <Settings className="size-4" />
                 </TooltipIconButton>
-                {/*  */}
-                <OpenGitHubRepo />
+                {/* 3. Bỏ GitHub */}
               </div>
 
-              {/* <div className="absolute top-2 right-4 flex items-center">
-                <OpenGitHubRepo />
-              </div> */}
             </div>
           )}
           {chatStarted && (
@@ -468,16 +463,21 @@ export function Thread() {
                 </motion.button>
               </div>
 
-              {/* <div className="flex items-center gap-4"> */}
+              
               <div className="flex items-center gap-2"> {/* Giảm gap */}
-                <ThemeToggle /> {/* Thêm nút Theme Toggle */}
-                <OpenGitHubRepo />
-                {/* <div className="flex items-center">
-                  <OpenGitHubRepo />
-                </div> */}
-                
-                {/*  */}
-                {/* Thêm nút Config Panel */}
+                {/* 1. Theme Toggle */}
+                <ThemeToggle /> 
+                {/* 2. New Thread */}
+                <TooltipIconButton
+                  size="icon" 
+                  className="h-8 w-8" 
+                  tooltip="New thread"
+                  variant="ghost"
+                  onClick={() => setThreadId(null)}
+                >
+                  <SquarePen className="size-4" />
+                </TooltipIconButton>
+                {/* 3. Config Panel */}
                 <TooltipIconButton
                   size="icon"
                   className="h-8 w-8"
@@ -487,35 +487,16 @@ export function Thread() {
                 >
                   <Settings className="size-4" />
                 </TooltipIconButton>
-                {/*  */}
-                
-                <TooltipIconButton
-                  // 
-                  // size="lg"
-                  // className="p-4"
-                  size="icon" // Thay đổi size
-                  className="h-8 w-8" // Thay đổi className
-                  // 
-                  tooltip="New thread"
-                  variant="ghost"
-                  onClick={() => setThreadId(null)}
-                >
-                  {/* <SquarePen className="size-5" /> */}
-                  <SquarePen className="size-4" /> {/* Giảm kích thước icon */}
-                </TooltipIconButton>
+                {/* 4. Bỏ GitHub */}
               </div>
 
               <div className="from-background to-background/0 absolute inset-x-0 top-full h-5 bg-gradient-to-b" />
             </div>
           )}
 
-          {/*  */}
-          {/* Thêm ConfigPanel component */}
-          <ConfigPanel
-            isOpen={isConfigPanelOpen}
-            onOpenChange={setIsConfigPanelOpen}
-          />
-          {/*  */}
+          
+          {/* Chuyển ConfigPanel ra ngoài, nhưng nó sẽ được render ở panel bên phải */}
+          
 
           <StickToBottom className="relative flex-1 overflow-hidden">
             <StickyToBottomContent
@@ -532,7 +513,7 @@ export function Thread() {
               contentClassName="pt-8 pb-16  max-w-3xl mx-auto flex flex-col gap-4 w-full"
               content={
                 <>
-                  {/*  */}
+                  {/* */}
                   {/* Sửa lỗi khoảng trống khi Hide Tool Calls */}
                   {messages
                     .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
@@ -557,7 +538,7 @@ export function Thread() {
                         />
                       );
                     })}
-                  {/*  */}
+                  {/* */}
                     
                   {/* {messages
                     .filter((m) => !m.id?.startsWith(DO_NOT_RENDER_ID_PREFIX))
@@ -724,7 +705,31 @@ export function Thread() {
           </div>
         </div>
       </div>
+       {/* Panel bên phải (Config) */}
+       <div className="relative hidden lg:flex">
+          <motion.div
+              className="absolute z-20 h-full overflow-hidden border-l bg-sidebar text-sidebar-foreground shadow-inner-left" // Style giống panel trái
+              style={{ width: 350, right: 0, top: 0 }} // Vị trí bên phải
+              animate={
+                  isLargeScreen
+                  ? { x: isConfigPanelOpen ? 0 : 350 } // Animation
+                  : { x: 350 } // Ẩn trên màn hình nhỏ
+              }
+              initial={{ x: 350 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+              <div className="relative h-full" style={{ width: 350 }}>
+                  {/* Render ConfigPanel ở đây với prop isPersistent */}
+                  <ConfigPanel 
+                      isOpen={isConfigPanelOpen} 
+                      onOpenChange={setIsConfigPanelOpen} 
+                      isPersistent={true} 
+                  />
+              </div>
+          </motion.div>
+      </div>
     </div>
   );
 }
 // 
+// ---- END MODIFY ----
